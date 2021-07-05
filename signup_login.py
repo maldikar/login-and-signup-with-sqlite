@@ -16,6 +16,16 @@ def signup():
     ea = input('Enter email address:' )
     cn = input('Enter contact no:' )
     
+    #checking if username entered already exists and it it does taking another input
+    c.execute("SELECT 1 FROM userdata WHERE username=?", (un,))
+    while len(c.fetchall()) > 0:
+        print('Username already exists, please try again')
+        un = input('Enter username:' )
+        pa = input('Enter password:' )
+        c.execute("SELECT 1 FROM userdata WHERE username=?", (un,))
+     
+    
+    
     #encrypting password
     pa = pa.encode()      
     salt = bcrypt.gensalt(14)               
@@ -33,19 +43,16 @@ def signup():
         print('Phone number should not start with', firstdigit, 'Please try again.')
         cn = input('Enter contact no:' )
         firstdigit = int(cn[0])
-         
     
-    #checking if username entered already exists and it it does taking another input
-    c.execute("SELECT 1 FROM userdata WHERE username=?", (un,))
-    while len(c.fetchall()) > 0:
-        print('Username already exists, please try again')
-        un = input('Enter username:' )
-        pa = input('Enter password:' )
-        c.execute("SELECT 1 FROM userdata WHERE username=?", (un,))
-    c.execute("""INSERT INTO userdata(username,password,email_address,contact_no) VALUES (?,?,?,?)""", (un, pa, ea, cn))    
+    
+    #if all conditions are satisfied
+    c.execute("""INSERT INTO userdata(username,password,email_address,contact_no) VALUES (?,?,?,?)""", (un, pa, ea, cn))   
     print('registration sucessfull') 
     conn.commit()
     conn.close()
+         
+    
+    
 
 
 #creating login function
